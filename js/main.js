@@ -2,10 +2,11 @@
 // 각 화면은 render(el)을 가지며, 정리할 것이 있으면 cleanup 함수를 돌려준다.
 import { CONFIG } from './config.js';
 import { S, subscribe, save, reset, addCoins } from './state.js';
-import { GAME_LIST, MEMORIES, COLLECT_ITEMS } from './data.js';
+import { MEMORIES, ITEMS, COLLECT_ITEMS } from './data.js';
 import { toast, confirmModal, openModal, inputModal } from './ui.js';
-import { hacho } from './hacho.js';
-import { $, esc } from './util.js';
+import { renderHome } from './home.js';
+import { renderCloset } from './closet.js';
+import { $, shuffle, today } from './util.js';
 
 const view = $('#view');
 const tabbar = $('#tabbar');
@@ -18,35 +19,10 @@ const placeholder = (ic, title, step) => (el) => {
 };
 
 const VIEWS = {
-  home: {
-    render(el) {
-      el.innerHTML = `
-        <div class="hero"><div class="hero-char">${hacho(S.equip)}</div></div>
-        <div class="glist">${GAME_LIST.map((g) => {
-          const best = S.best[g.id];
-          return `
-          <button type="button" class="gcard" data-game="${g.id}">
-            <div class="ic">${g.icon}</div>
-            <div class="nm">${g.name}</div>
-            <div class="ds">${g.desc}</div>
-            <div class="bs">${best ? `최고 🪙${best}` : '&nbsp;'}</div>
-          </button>`;
-        }).join('')}
-        </div>
-        <p class="tip">게임으로 코인을 모아 쿠지를 뽑아요! (1회 🪙${CONFIG.kujiPrice})</p>
-        <button type="button" class="link-small" data-act="reset">처음부터 다시하기</button>`;
-
-      const onClick = (e) => {
-        if (e.target.closest('[data-act="reset"]')) askReset();
-        else if (e.target.closest('[data-game]')) toast('게임은 7~9단계에서 만들어요');
-      };
-      el.addEventListener('click', onClick);
-      return () => el.removeEventListener('click', onClick);
-    },
-  },
+  home: { render: (el) => renderHome(el, { askReset }) },
   kuji: { render: placeholder('🎫', '쿠지', 4) },
   album: { render: placeholder('🖼️', '사진첩', 6) },
-  closet: { render: placeholder('👕', '꾸미기', 3) },
+  closet: { render: renderCloset },
 };
 
 /* ---------- 라우팅 ---------- */
@@ -133,6 +109,8 @@ function setupDebug() {
         <h3 class="m-title">🛠 개발 도구</h3>
         <div class="btns col">
           <button type="button" class="btn" data-d="coin">코인 +500</button>
+          <button type="button" class="btn gray" data-d="items-all">아이템 전부 받기 (+왕관)</button>
+          <button type="button" class="btn gray" data-d="items-half">아이템 절반 받기</button>
           <button type="button" class="btn gray" data-d="input">입력 모달 테스트</button>
           <button type="button" class="btn gray" data-d="state">저장 상태 보기</button>
           <button type="button" class="btn danger" data-d="reset">처음부터 다시하기</button>
@@ -149,6 +127,12 @@ function setupDebug() {
             pre.textContent = JSON.stringify(S, null, 2);
           }
           if (d === 'reset') { close(); askReset(); }
+          if (d === 'items-all' || d === 'items-half') {
+            const list = d === 'items-all' ? ITEMS : shuffle(COLLECT_ITEMS.slice()).slice(0, 12);
+            list.forEach((i) => { S.items[i.id] ||= { at: today() }; });
+            save(); close(); rerender();
+            toast(`아이템 ${list.length}개 받음`);
+          }
           if (d === 'input') {
             close();
             const r = await inputModal({ title: '문장 바꾸기', value: MEMORIES[0].caption, resetText: '기본 문장' });

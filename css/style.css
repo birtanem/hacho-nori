@@ -170,7 +170,73 @@ h1, h2, h3, h4 { font-weight: 400; }
   gap: 8px;
 }
 
-.hero-char { width: min(52vw, 200px); }
+.hero-char { width: min(44vw, 170px); padding: 0; touch-action: manipulation; }
+.hero-char.jump { animation: jump .38s ease-out; }
+@keyframes jump { 40% { transform: translateY(-16px) scale(1.04, .96); } 70% { transform: translateY(0) scale(.97, 1.03); } }
+
+.bubble {
+  position: relative;
+  max-width: 92%;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 7px 14px;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+.bubble::after {            /* 말풍선 꼬리 (아래, 하초 쪽) */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 14px; height: 14px;
+  background: #fff;
+  border-right: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  transform: translateX(-50%) rotate(45deg);
+}
+.bubble.pop { animation: pop .2s; }
+
+/* ---------- 꾸미기 ---------- */
+.closet-top {
+  position: sticky;
+  top: -4px;                /* .view 의 padding-top 만큼 */
+  z-index: 2;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 6px var(--gutter) 8px;
+  background: var(--bg);
+  border-bottom: 2px solid var(--line);
+}
+.closet-char {
+  width: min(40vw, 170px, 21vh);   /* 작은 화면에서는 아이템 칩이 더 보이게 */
+  width: min(40vw, 170px, 21dvh);
+  margin: 0 auto;
+  background: linear-gradient(#dff3ff, #fff);
+  border: 2px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+}
+.closet-char.wiggle { animation: jump .3s ease-out; }
+.closet-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.closet-count { color: var(--sub); }
+.closet-count b { color: var(--ink); font-weight: 400; font-size: 1.15rem; }
+.btn.small { padding: 6px 12px; font-size: .9rem; }
+.btn:disabled { opacity: .45; pointer-events: none; }
+
+.slot h4 { margin: 14px 0 8px; color: var(--sub); font-size: .95rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: .95rem;
+  white-space: nowrap;
+}
+.chip.on { background: var(--sky); border-color: var(--sky2); color: #fff; }
+.chip.lock { color: #b5c2cd; border-style: dashed; }
+button.chip:active { transform: scale(.95); }
 .char-svg { display: block; width: 100%; height: auto; }
 
 .glist { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
