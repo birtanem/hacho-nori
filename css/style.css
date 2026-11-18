@@ -170,6 +170,9 @@ h1, h2, h3, h4 { font-weight: 400; }
   gap: 8px;
 }
 
+.hero-char { width: min(52vw, 200px); }
+.char-svg { display: block; width: 100%; height: auto; }
+
 .glist { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 .gcard {
   min-width: 0;

@@ -4,6 +4,7 @@ import { CONFIG } from './config.js';
 import { S, subscribe, save, reset, addCoins } from './state.js';
 import { GAME_LIST, MEMORIES, COLLECT_ITEMS } from './data.js';
 import { toast, confirmModal, openModal, inputModal } from './ui.js';
+import { hacho } from './hacho.js';
 import { $, esc } from './util.js';
 
 const view = $('#view');
@@ -20,7 +21,7 @@ const VIEWS = {
   home: {
     render(el) {
       el.innerHTML = `
-        <div class="hero"><div class="placeholder" style="margin:0;padding:18px">하초 자리 (2·3단계)</div></div>
+        <div class="hero"><div class="hero-char">${hacho(S.equip)}</div></div>
         <div class="glist">${GAME_LIST.map((g) => {
           const best = S.best[g.id];
           return `

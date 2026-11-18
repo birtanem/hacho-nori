@@ -37,7 +37,7 @@ export const SLOTS = [
 /* ---------- 꾸미기 아이템 (C 8 · D 16 + 왕관) ---------- */
 export const ITEMS = [
   // 레어 (C상)
-  { id: 'bg_spring', grade: 'C', slot: 'bg', icon: '🌃', name: '봄밤 배경' },
+  { id: 'bg_spring', grade: 'C', slot: 'bg', icon: '🌷', name: '봄날 배경' },
   { id: 'bg_star', grade: 'C', slot: 'bg', icon: '🌌', name: '별밤 배경' },
   { id: 'bg_xmas', grade: 'C', slot: 'bg', icon: '🎅', name: '크리스마스 배경' },
   { id: 'hula_skirt', grade: 'C', slot: 'outfit', icon: '🌴', name: '훌라치마' },

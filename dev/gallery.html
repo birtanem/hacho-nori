@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>캐릭터 갤러리 (개발용)</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 12px; font-family: Jua, system-ui, sans-serif; background: #f3f6f9; color: #2b3a4a; }
+  h2 { font-weight: 400; margin: 18px 0 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .cell { background: #fff; border-radius: 12px; padding: 6px; text-align: center; font-size: 13px; }
+  .cell svg { width: 100%; height: auto; display: block; outline: 1px dashed #c3d0dc; } /* 점선 = SVG 영역 */
+  .cell small { color: #8a99a6; }
+  .tiny .cell svg { width: 64px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<h2>기본</h2><div class="grid" id="base"></div>
+<h2>아이템 하나씩 (C 레어 · D 일반 · S 특별)</h2><div class="grid" id="items"></div>
+<h2>조합</h2><div class="grid" id="combo"></div>
+<h2>작게 (64px)</h2><div class="grid tiny" id="tiny"></div>
+<script type="module">
+import { hacho, duna, hasArt } from '../js/hacho.js';
+import { ITEMS } from '../js/data.js';
+const cell = (svg, name, sub = '') => `<div class="cell">${svg}<div>${name}</div><small>${sub}</small></div>`;
+base.innerHTML = cell(hacho(), '하초') + cell(duna(), '두나');
+items.innerHTML = ITEMS.map(i => cell(hacho({ [i.slot]: i.id }), `${i.icon} ${i.name}`, `${i.grade} · ${i.slot}${hasArt(i.slot, i.id) ? '' : ' · ❌그림없음'}`)).join('');
+const combos = [
+  ['물놀이', { bg: 'bg_sea', outfit: 'bikini', prop: 'tube', face: 'goggles', hand: 'parasol', head: 'flower' }],
+  ['비 오는 날', { outfit: 'raincoat', head: 'hat', face: 'glasses', hand: 'balloon' }],
+  ['크리스마스', { bg: 'bg_xmas', prop: 'scarf', head: 'ribbon', face: 'blush', outfit: 'skirt', hand: 'camera' }],
+  ['훌라', { bg: 'bg_star', outfit: 'hula_skirt', head: 'crown', face: 'sunglasses', hand: 'wand', foot: 'skateboard' }],
+  ['겨울', { bg: 'bg_winter', outfit: 'pants', prop: 'scarf', head: 'hat', face: 'blush' }],
+  ['봄날', { bg: 'bg_spring', outfit: 'skirt', head: 'flower', hand: 'camera', foot: 'skateboard' }],
+];
+combo.innerHTML = combos.map(([n, e]) => cell(hacho(e), n)).join('');
+tiny.innerHTML = cell(hacho(), '하초') + cell(duna(), '두나') + combos.map(([n, e]) => cell(hacho(e), n)).join('');
+const missing = ITEMS.filter(i => !hasArt(i.slot, i.id));
+console.log('missing art:', missing.map(i => i.id).join(',') || 'none');
+document.title += missing.length ? ' ❌' : ' ✅';
+</script>
+</body>
+</html>
