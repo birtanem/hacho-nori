@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>도트 장면 (개발용)</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  body { display: block; overflow: auto; padding: 12px; background: #f3f6f9; }
+  h2 { margin: 16px 0 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .cell { background: #fff; border-radius: 12px; padding: 10px; text-align: center; }
+  .cell p { margin: 6px 0 0; font-size: 14px; }
+  .cell small { color: #8a99a6; }
+  .big .grid { grid-template-columns: repeat(2, 532px); }
+  .big .small { display: none; }
+  .big .frame { max-width: none; }
+  .small .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+</style>
+</head>
+<body>
+<h2>액자 (모달 크기 ≈ 4배)</h2><div class="grid" id="big"></div>
+<div class="small"><h2>사진첩 크기 (≈ 2배)</h2><div class="grid" id="small"></div></div>
+<script type="module">
+import { MEMORIES } from '../js/data.js';
+import { sceneHTML, autoPaintScenes } from '../js/pixel.js';
+const cell = (m) => `<div class="cell"><div class="frame">${sceneHTML(m.id, m.name)}</div><p>${m.icon} ${m.name}</p><small>${m.caption}</small></div>`;
+if (location.search.includes('big')) document.body.classList.add('big');
+big.innerHTML = MEMORIES.map(cell).join('');
+small.innerHTML = MEMORIES.map(cell).join('');
+autoPaintScenes();
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@ import { toast, confirmModal, openModal, inputModal } from './ui.js';
 import { renderHome } from './home.js';
 import { renderCloset } from './closet.js';
 import { renderKuji } from './kuji.js';
+import { autoPaintScenes } from './pixel.js';
 import { $, shuffle, today } from './util.js';
 
 const view = $('#view');
@@ -149,6 +150,7 @@ function setupDebug() {
 
 /* ---------- 시작 ---------- */
 paintCoins();
+autoPaintScenes();
 if (DEBUG) setupDebug();
 show(tabFromHash());
 

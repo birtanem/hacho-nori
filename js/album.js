@@ -3,13 +3,14 @@ import { S } from './state.js';
 import { MEMORY_BY_ID } from './data.js';
 import { openModal } from './ui.js';
 import { esc } from './util.js';
+import { sceneHTML } from './pixel.js';
 
 export const captionOf = (id) => S.captions[id] || MEMORY_BY_ID[id].caption;
 
-/** 추억 액자 HTML. 5단계에서 도트 장면(canvas)으로 바뀐다. */
+/** 추억 액자 HTML (도트 장면). 캔버스는 pixel.js 가 자동으로 그린다. */
 export function memoryFrame(id) {
   const m = MEMORY_BY_ID[id];
-  return `<div class="frame"><div class="pix-ph">${m.icon}</div></div>`;
+  return `<div class="frame">${sceneHTML(id, m.name)}</div>`;
 }
 
 /** 추억조각 크게 보기 */
