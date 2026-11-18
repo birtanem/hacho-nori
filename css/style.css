@@ -362,6 +362,95 @@ button.chip:active { transform: scale(.95); }
 
 .tip { text-align: center; color: var(--sub); font-size: .9rem; margin: 16px 0; }
 
+/* ---------- 등급 배지 ---------- */
+.gb { display: inline-block; min-width: 38px; text-align: center; color: #fff; border-radius: 8px; padding: 2px 6px; font-size: .85rem; }
+.gA { background: var(--gA); } .gB { background: var(--gB); } .gC { background: var(--gC); }
+.gD { background: var(--gD); } .gE { background: var(--gE); }
+.gR { background: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffd43b, #69db7c, #4dabf7, #9775fa); }
+
+/* ---------- 쿠지 ---------- */
+.khead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.khead .h2 { margin-bottom: 4px; }
+.kleft { color: var(--sub); white-space: nowrap; }
+.kleft b { color: var(--ink); font-weight: 400; font-size: 1.15rem; }
+.kinfo { margin: 0 0 10px; font-size: .85rem; color: var(--sub); }
+.kinfo b { font-weight: 400; color: #9775fa; }
+.prizes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 14px; }
+.pcell {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  min-width: 0;
+  background: #fff; border: 2px solid var(--line); border-radius: 12px;
+  padding: 7px 2px 6px;
+}
+.pcell .gb { min-width: 0; padding: 1px 6px; }
+.pcell .n { color: var(--sub); font-size: .85rem; }
+.pcell .n b { color: var(--ink); font-weight: 400; font-size: 1.05rem; }
+.pcell .pname { font-size: .68rem; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.pcell.out { opacity: .4; }
+
+.board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.tk {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: repeating-linear-gradient(135deg, #fff 0 8px, #f2f9ff 8px 16px);
+  border: 2px solid #b9dcf3;
+  box-shadow: 0 3px 0 #b9dcf3;
+  font-size: 1.3rem;
+  overflow: hidden;
+}
+.tk::after {               /* 접힌 귀퉁이 */
+  content: ""; position: absolute; right: 0; top: 0;
+  border-width: 0 14px 14px 0; border-style: solid;
+  border-color: transparent var(--bg) #cfe7f7 transparent;
+}
+button.tk:active { transform: translateY(2px); box-shadow: none; }
+.tk.open { color: #fff; border-color: transparent; box-shadow: none; opacity: .55; font-size: 1.1rem; }
+.tk.open::after { display: none; }
+.tk.shake { animation: shake .48s ease-in-out; }
+.tk.unfold { animation: unfold .34s ease-in forwards; }
+@keyframes shake {
+  20% { transform: rotate(-9deg) scale(1.06); } 40% { transform: rotate(8deg) scale(1.1); }
+  60% { transform: rotate(-7deg) scale(1.12); } 80% { transform: rotate(6deg) scale(1.14); }
+}
+@keyframes unfold { to { transform: scale(1.4, 0) rotate(4deg); opacity: 0; } }
+
+.rainbow-card {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 6px; padding: 12px 14px;
+  background: #fff; border: 2px dashed #d7c8f5; border-radius: 16px;
+}
+.rainbow-card .tk { width: 54px; flex: none; }
+.rainbow-card p { margin: 0; color: var(--sub); font-size: .9rem; }
+.rainbow-card p b { font-weight: 400; color: var(--ink); }
+.tk.rainbow { background: linear-gradient(160deg, #ffb3b3, #ffd8a8, #fff3a8, #b2f2bb, #a5d8ff, #d0bfff); border-color: #d0bfff; box-shadow: 0 3px 0 #b197fc; }
+.tk.rainbow.locked { filter: grayscale(.85) opacity(.55); box-shadow: none; }
+.rainbow-card.open { border-style: solid; border-color: #b197fc; }
+.rainbow-card.open .tk { animation: shine 1.4s ease-in-out infinite; }
+@keyframes shine { 50% { transform: scale(1.08) rotate(-3deg); filter: brightness(1.15); } }
+
+.kdone { text-align: center; margin-bottom: 12px; }
+.kdone .ic { font-size: 3rem; }
+
+/* ---------- 결과 · 추억 모달 ---------- */
+.grade { display: inline-block; font-size: 1.5rem; color: #fff; border-radius: 12px; padding: 3px 18px; margin-bottom: 12px; }
+.res-char { width: 150px; margin: 0 auto 6px; background: #eef8ff; border-radius: 16px; overflow: hidden; }
+.res-coin { font-size: 4rem; line-height: 1.2; }
+.res .m-title { margin-top: 8px; }
+
+.frame {
+  background: #a8794f; padding: 8px; border-radius: 6px;
+  box-shadow: inset 0 0 0 3px #7b5534, 0 4px 0 #d9c3a8;
+  max-width: 260px; margin: 0 auto;
+}
+.pix-ph {                  /* 5단계 도트 장면 전까지 임시 */
+  aspect-ratio: 4 / 3; display: grid; place-items: center;
+  background: #fffaf0; border: 3px solid #f7ecd8; font-size: 3.4rem;
+}
+.memv .cap { font-size: 1.05rem; line-height: 1.45; margin: 6px 0; }
+.memv .date { font-size: .8rem; color: var(--sub); margin: 0; }
+
 /* ---------- 휴대폰 가로 모드 안내 ---------- */
 .rotate { display: none; }
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 500px) {

@@ -6,6 +6,7 @@ import { MEMORIES, ITEMS, COLLECT_ITEMS } from './data.js';
 import { toast, confirmModal, openModal, inputModal } from './ui.js';
 import { renderHome } from './home.js';
 import { renderCloset } from './closet.js';
+import { renderKuji } from './kuji.js';
 import { $, shuffle, today } from './util.js';
 
 const view = $('#view');
@@ -20,7 +21,7 @@ const placeholder = (ic, title, step) => (el) => {
 
 const VIEWS = {
   home: { render: (el) => renderHome(el, { askReset }) },
-  kuji: { render: placeholder('🎫', '쿠지', 4) },
+  kuji: { render: (el) => renderKuji(el, { go, rerender }) },
   album: { render: placeholder('🖼️', '사진첩', 6) },
   closet: { render: renderCloset },
 };
@@ -109,6 +110,7 @@ function setupDebug() {
         <h3 class="m-title">🛠 개발 도구</h3>
         <div class="btns col">
           <button type="button" class="btn" data-d="coin">코인 +500</button>
+          <button type="button" class="btn" data-d="coin3000">코인 +3000 (40장 분량)</button>
           <button type="button" class="btn gray" data-d="items-all">아이템 전부 받기 (+왕관)</button>
           <button type="button" class="btn gray" data-d="items-half">아이템 절반 받기</button>
           <button type="button" class="btn gray" data-d="input">입력 모달 테스트</button>
@@ -121,6 +123,7 @@ function setupDebug() {
         box.addEventListener('click', async (e) => {
           const d = e.target.closest('[data-d]')?.dataset.d;
           if (d === 'coin') { addCoins(500); toast('🪙 +500'); }
+          if (d === 'coin3000') { addCoins(3000); toast('🪙 +3000'); }
           if (d === 'state') {
             const pre = box.querySelector('.debug-pre');
             pre.hidden = false;
