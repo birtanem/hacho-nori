@@ -1,0 +1,219 @@
+/* =========================================================
+   하초놀이터 — 스타일
+   ========================================================= */
+
+/* ---------- 토큰 ---------- */
+:root {
+  --bg: #eef8ff;          /* 앱 배경 */
+  --side: #d9efff;        /* 앱 바깥(아이패드·PC 양옆) */
+  --ink: #2b3a4a;
+  --sub: #6b7f93;
+  --sky: #8fd3ff;
+  --sky2: #4a9fd6;
+  --leaf: #5cbf5c;
+  --card: #fff;
+  --pink: #ff8fa3;
+  --gold: #ffc83d;
+  --line: #d6e9f7;
+
+  --gA: #ff5a7a; --gB: #ff9f43; --gC: #4dabf7; --gD: #51cf66; --gE: #adb5bd;
+
+  --radius: 18px;
+  --gutter: 14px;
+  --app-max: 520px;
+
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+
+  /* 기기 폭에 따라 글자 크기 조절 (360px ≈ 14.4px, 400px 이상 = 16px) */
+  font-size: clamp(14px, 4vw, 16px);
+}
+
+/* ---------- 기본 ---------- */
+*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  color: var(--ink);
+  font-family: "Jua", system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  touch-action: manipulation;           /* 더블탭 확대 방지 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+body {
+  overflow: hidden;                     /* 스크롤은 앱 안의 .view 에서만 */
+  overscroll-behavior: none;
+  background-color: var(--side);
+  /* 양옆 빈 공간: 구름·잎사귀 도트 패턴 (24칸 × 4px 타일) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='96' height='96' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff' opacity='.85'%3E%3Crect x='3' y='3' width='4' height='1'/%3E%3Crect x='2' y='4' width='8' height='1'/%3E%3Crect x='1' y='5' width='10' height='2'/%3E%3C/g%3E%3Cg fill='%237fcf7f' opacity='.7'%3E%3Crect x='18' y='13' width='2' height='1'/%3E%3Crect x='17' y='14' width='3' height='1'/%3E%3Crect x='16' y='15' width='3' height='1'/%3E%3Crect x='16' y='16' width='2' height='1'/%3E%3C/g%3E%3Crect x='15' y='17' width='1' height='1' fill='%235a9f5a' opacity='.7'/%3E%3Cg fill='%23ffd86b' opacity='.7'%3E%3Crect x='6' y='18' width='3' height='1'/%3E%3Crect x='5' y='19' width='4' height='1'/%3E%3Crect x='6' y='20' width='2' height='1'/%3E%3C/g%3E%3Crect x='7' y='21' width='1' height='1' fill='%23c9a640' opacity='.7'/%3E%3C/svg%3E");
+  background-size: 96px 96px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+button { font: inherit; color: inherit; border: 0; background: none; padding: 0; cursor: pointer; }
+h1, h2, h3, h4 { font-weight: 400; }
+
+/* ---------- 앱 영역 (세로형 앱 화면) ---------- */
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--app-max);
+  height: 100vh;                        /* 폴백 */
+  height: 100dvh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* 아이패드·PC: 가운데 고정 폭 + 둥근 모서리 + 그림자 = 휴대폰 화면 느낌 */
+@media (min-width: 600px) {
+  body { align-items: center; }
+  .app {
+    height: calc(100vh - 48px);
+    height: calc(100dvh - 48px);
+    max-height: 940px;
+    border-radius: 28px;
+    box-shadow: 0 0 0 2px #c4e2f7, 0 18px 50px rgba(43, 90, 130, .22);
+  }
+}
+
+/* ---------- 상단바 ---------- */
+.topbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(10px + var(--safe-t)) calc(var(--gutter) + var(--safe-r)) 10px calc(var(--gutter) + var(--safe-l));
+  background: var(--bg);
+  border-bottom: 2px solid transparent;
+}
+.topbar h1 { margin: 0; font-size: 1.3rem; white-space: nowrap; }
+.coin {
+  flex: none;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+/* ---------- 본문 (여기만 스크롤) ---------- */
+.view {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px calc(var(--gutter) + var(--safe-r)) 24px calc(var(--gutter) + var(--safe-l));
+}
+
+/* ---------- 하단 탭바 (앱 영역 폭에 맞춤) ---------- */
+.tabbar {
+  flex: none;
+  display: flex;
+  background: #fff;
+  border-top: 2px solid var(--line);
+  padding: 0 var(--safe-r) var(--safe-b) var(--safe-l);
+}
+.tabbar button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0 9px;
+  font-size: .85rem;
+  color: var(--sub);
+}
+.tabbar button b { font-size: 1.45rem; font-weight: 400; line-height: 1.1; }
+.tabbar button.on { color: var(--sky2); }
+.tabbar button:focus-visible { outline: 3px solid var(--sky); outline-offset: -3px; border-radius: 12px; }
+
+/* ---------- 겹침 레이어 (모달·토스트·게임) ---------- */
+.layer { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+.layer > * { pointer-events: auto; }
+
+/* ---------- 공통 요소 ---------- */
+.h2 { display: flex; align-items: baseline; gap: 8px; margin: 6px 0 12px; font-size: 1.3rem; }
+.h2 small { color: var(--sub); font-size: .9rem; }
+
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.hero {
+  background: linear-gradient(#dff3ff, #fff);
+  border: 2px solid var(--line);
+  border-radius: 22px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.glist { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.gcard {
+  min-width: 0;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 3px 0 var(--line);
+}
+.gcard:active { transform: translateY(2px); box-shadow: none; }
+.gcard .ic { font-size: 2.1rem; line-height: 1.2; }
+.gcard .nm { font-size: 1.05rem; margin: 4px 0 2px; }
+.gcard .ds { font-size: .78rem; color: var(--sub); font-family: system-ui, sans-serif; line-height: 1.35; }
+
+.placeholder {
+  margin-top: 14px;
+  text-align: center;
+  color: var(--sub);
+  padding: 28px 14px;
+}
+.placeholder .ic { font-size: 3rem; }
+
+.tip { text-align: center; color: var(--sub); font-size: .9rem; margin: 16px 0; }
+
+/* ---------- 휴대폰 가로 모드 안내 ---------- */
+.rotate { display: none; }
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 500px) {
+  .app { display: none; }
+  .rotate {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--bg);
+    font-size: 1.4rem;
+    z-index: 100;
+  }
+  .rotate p { margin: 0; }
+  .rotate-ic { font-size: 3rem; animation: tilt 1.6s ease-in-out infinite; }
+}
+@keyframes tilt { 0%, 30% { transform: rotate(90deg); } 60%, 100% { transform: rotate(0deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
