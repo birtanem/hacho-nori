@@ -7,7 +7,7 @@ export const H = 48;
 /* =========================================================
    도구
    ========================================================= */
-function tools(c, seed = 7) {
+export function tools(c, seed = 7) {
   let s = seed;
   const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
   const R = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
@@ -91,7 +91,7 @@ const LEGS = {
  * @param {number} x 왼쪽 위 (15×14 칸)
  * @param {object} o { back, armL, armR, legs, crown, web, hula, holdL, holdR }
  */
-function chara(t, who, x, y, o = {}) {
+export function chara(t, who, x, y, o = {}) {
   const rows = who === 'hacho' ? HACHO : DUNA;
   const defArm = who === 'hacho' ? 'up' : 'wing';
   const armL = ARMS[o.armL || defArm], armR = ARMS[o.armR || defArm];

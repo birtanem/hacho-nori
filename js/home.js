@@ -45,9 +45,9 @@ export function renderHome(el, ctx) {
     void char.offsetWidth; // 애니메이션 다시 시작
     char.classList.add('jump');
     bubble.textContent = nextLine();
-    bubble.classList.remove('pop');
+    bubble.classList.remove('bubble-pop');
     void bubble.offsetWidth;
-    bubble.classList.add('pop');
+    bubble.classList.add('bubble-pop');
   };
   const onClick = (e) => {
     if (e.target.closest('[data-act="reset"]')) { ctx.askReset(); return; }
@@ -55,7 +55,7 @@ export function renderHome(el, ctx) {
     if (!card) return;
     const id = card.dataset.game;
     if (isPlayable(id)) openGame(id, { onClose: ctx.rerender });
-    else toast('이 게임은 곧 열려요 (9단계)');
+    else toast('이 게임은 곧 열려요');
   };
   el.addEventListener('pointerdown', poke);
   el.addEventListener('click', onClick);

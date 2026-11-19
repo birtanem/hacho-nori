@@ -13,7 +13,7 @@ export const MEMORIES = [
   { id: 'hula', grade: 'B', icon: '🌺', name: '훌라', caption: '인생이란 눈치보지 않고 춤을 추는 것 !' },
   { id: 'pot', grade: 'B', icon: '🪴', name: '화분', caption: '화분도 자라고 하초도 자라나' },
   { id: 'jam', grade: 'B', icon: '🍓', name: '잼', caption: '잼얘없어?' },
-  { id: 'bread', grade: 'B', icon: '🍃🍞', name: '나뭇잎+빵', caption: '긴 풀빵길도 함께면 금방이야!' },
+  { id: 'bread', grade: 'B', icon: '🍃🍞', name: '풀빵', caption: '긴 풀빵길도 함께면 금방이야!' },
   { id: 'tree', grade: 'B', icon: '🎄', name: '크리스마스트리', caption: '나에겐 너가 선물이야아아' },
   { id: 'hourglass', grade: 'B', icon: '⏳', name: '모래시계', caption: '오래전부터 당신같은 친구를 기다려 왔다우' },
   { id: 'cake', grade: 'B', icon: '🎂', name: '케이크', caption: 'HAPPY BIRTHDAY HACHO!' },

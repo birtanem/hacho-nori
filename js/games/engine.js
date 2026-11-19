@@ -19,6 +19,8 @@ const MODULES = {
   pair: () => import('./pair.js'),
   mole: () => import('./mole.js'),
   catch: () => import('./catch.js'),
+  runner: () => import('./runner.js'),
+  tower: () => import('./tower.js'),
 };
 export const isPlayable = (id) => !!MODULES[id];
 

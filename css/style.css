@@ -196,7 +196,7 @@ h1, h2, h3, h4 { font-weight: 400; }
   border-bottom: 2px solid var(--line);
   transform: translateX(-50%) rotate(45deg);
 }
-.bubble.pop { animation: pop .2s; }
+.bubble.bubble-pop { animation: pop .2s; }
 
 /* ---------- 꾸미기 ---------- */
 .closet-top {
@@ -561,14 +561,14 @@ button.acell:active .frame { transform: translateY(2px); }
   background: radial-gradient(ellipse 44% 15% at 50% 84%, #5a3d28 95%, transparent 100%), #bfe6a8;
   touch-action: none;
 }
-.pop { position: absolute; left: 8%; width: 84%; bottom: -105%; transition: bottom .12s ease-out; pointer-events: none; }
-.pop svg { display: block; width: 100%; height: auto; }
-.pop .bee { position: relative; aspect-ratio: 240 / 270; }      /* 하초 SVG 칸과 같은 비율 */
-.pop .bee span {                                                 /* 하초 몸통(지름 ≈ 37px)과 비슷한 크기·위치 */
+.mole-pop { position: absolute; left: 8%; width: 84%; bottom: -105%; transition: bottom .12s ease-out; pointer-events: none; }
+.mole-pop svg { display: block; width: 100%; height: auto; }
+.mole-pop .bee { position: relative; aspect-ratio: 240 / 270; }      /* 하초 SVG 칸과 같은 비율 */
+.mole-pop .bee span {                                                 /* 하초 몸통(지름 ≈ 37px)과 비슷한 크기·위치 */
   position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
   font-size: 38px; line-height: 1;
 }
-.hole.up .pop { bottom: 4%; }
+.hole.up .mole-pop { bottom: 4%; }
 .hole.hit { animation: holeHit .25s; }
 .hole.ouch { animation: holeOuch .3s; }
 @keyframes holeHit { 50% { background-color: #d8f5c4; } }

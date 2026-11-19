@@ -27,7 +27,7 @@ export default {
       bee: '<div class="bee"><span>🐝</span></div>', // 하초 SVG와 같은 비율의 칸, 몸통 위치에 벌
     };
     api.stage.innerHTML = `
-      <div class="mole-grid">${'<div class="hole"><div class="pop"></div></div>'.repeat(9)}</div>`;
+      <div class="mole-grid">${'<div class="hole"><div class="mole-pop"></div></div>'.repeat(9)}</div>`;
     const holes = [...api.stage.querySelectorAll('.hole')];
     st = { holes, hits: 0, misses: 0 };
     api.startTimer();
