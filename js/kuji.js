@@ -11,12 +11,12 @@ import { memoryFrame, showMemory } from './album.js';
 import { playEnding } from './ending.js';
 import { pick, shuffle, today } from './util.js';
 
-const PAPERS = Object.values(BOX_GRADES).reduce((a, b) => a + b, 0); // 20
+const PAPERS = Object.values(BOX_GRADES).reduce((a, b) => a + b, 0); // 22
 const GRADE_ORDER = ['A', 'B', 'C', 'D', 'E'];
 const COLLECT_MEMORIES = MEMORIES.filter((m) => m.grade === 'A' || m.grade === 'B'); // 12
 export const TOTAL_COLLECT = COLLECT_MEMORIES.length + COLLECT_ITEMS.length;      // 36
 
-export const refundAmount = () => Math.round(CONFIG.kujiPrice * CONFIG.eRefundRate);
+export const refundAmount = () => CONFIG.eRefund;
 
 /* ---------- 상태 도우미 ---------- */
 function makeBox() {
@@ -28,9 +28,21 @@ function makeBox() {
 /** 현재 박스가 없으면 만든다 (1·2탄). 두 박스를 다 뽑았으면 null. */
 export function ensureBox() {
   if (S.boxNo > BOX_COUNT) { S.box = null; return null; }
-  const ok = S.box && S.box.papers.length === PAPERS && Array.isArray(S.box.opened);
-  if (!ok) { S.box = makeBox(); save(); }
+  const b = S.box;
+  if (!b || !Array.isArray(b.papers) || !Array.isArray(b.opened)) { S.box = makeBox(); save(); return S.box; }
+  if (b.papers.length !== PAPERS) { migrateBox(b); save(); }
   return S.box;
+}
+
+// 박스 구성이 바뀐 저장값(예: 예전 20장 박스)을 이어서 쓸 수 있게: 이미 뽑은 종이는 그대로 두고,
+// 모자란 등급 종이를 추가한 뒤 아직 안 뽑은 칸끼리만 다시 섞는다.
+function migrateBox(b) {
+  const have = {};
+  b.papers.forEach((g) => { have[g] = (have[g] || 0) + 1; });
+  for (const g of GRADE_ORDER) for (let i = have[g] || 0; i < BOX_GRADES[g]; i++) b.papers.push(g);
+  const closed = b.papers.map((_, i) => i).filter((i) => !b.opened.includes(i));
+  const grades = shuffle(closed.map((i) => b.papers[i]));
+  closed.forEach((i, k) => { b.papers[i] = grades[k]; });
 }
 
 /** 모은 개수 (무지개 진행도 n/36) */
@@ -107,7 +119,7 @@ function boardHTML() {
   box.papers.forEach((g, i) => { if (!box.opened.includes(i)) left[g]++; });
   const remain = PAPERS - box.opened.length;
 
-  const SHORT = { A: '추억조각', B: '추억조각', C: '레어 아이템', D: '아이템', E: `🪙${refundAmount()}` };
+  const SHORT = { A: '추억조각', B: '추억조각', C: '레어 아이템', D: '아이템', E: '하초의용기' };
   const rows = GRADE_ORDER.map((g) => `
     <div class="pcell${left[g] ? '' : ' out'}">${badge(g)}
       <span class="n"><b>${left[g]}</b>/${total[g]}</span>
@@ -183,8 +195,8 @@ function resultHTML(r) {
     btn = `<button type="button" class="btn" data-act="wear" data-id="${r.id}">👕 입어보기</button>`;
   } else {
     vis = '<div class="res-coin">🪙</div>';
-    title = `코인 +${r.amount}`;
-    msg = r.fallback ? '이미 다 모아서 코인으로 돌려받았어요' : '하초가 코인을 돌려줬어요!';
+    title = r.fallback ? `코인 +${r.amount}` : '하초의용기';
+    msg = r.fallback ? '이미 다 모아서 코인으로 돌려받았어요' : `하초가 용기를 내서 🪙${r.amount}을 돌려줬어요!`;
   }
   return `
     <div class="res">

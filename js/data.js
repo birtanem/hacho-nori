@@ -72,13 +72,13 @@ export const COLLECT_ITEMS = ITEMS.filter((i) => i.grade === 'C' || i.grade === 
 
 /* ---------- 쿠지 ---------- */
 export const BOX_COUNT = 2;                                  // 1탄 → 2탄
-export const BOX_GRADES = { A: 2, B: 4, C: 4, D: 8, E: 2 };  // 한 박스 20장
+export const BOX_GRADES = { A: 2, B: 4, C: 4, D: 8, E: 4 };  // 한 박스 22장 (두 박스 합계 E 8장)
 export const GRADES = {
   A: { label: 'A상', prize: '추억조각' },
   B: { label: 'B상', prize: '추억조각' },
   C: { label: 'C상', prize: '꾸미기 아이템 · 레어' },
   D: { label: 'D상', prize: '꾸미기 아이템' },
-  E: { label: 'E상', prize: '코인 환급' },
+  E: { label: 'E상', prize: '하초의용기' },   // 코인 환급 (CONFIG.eRefund)
   R: { label: '무지개', prize: '무지개 조각 + 왕관' },
 };
 

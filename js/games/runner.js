@@ -16,7 +16,7 @@ const JUMP_V = 215;              // 점프 속도 → 최고 높이 ≈ 37px, �
 const BUFFER = 0.12;             // 착지 직전에 누른 점프도 인정
 const HIT_SLOW = 1.2;            // 부딪힌 뒤 느려지는 시간
 const INVULN = 1.0;              // 부딪힌 뒤 무적 시간
-export const COIN_RATE = 0.14;   // 보통 실력 ≈ 28코인 (시뮬레이션 기준)
+export const COIN_RATE = 0.158;  // 보통 실력 ≈ 30코인 (시뮬레이션 기준)
 export const PTS = { dist: 1 / 40, leaf: 2, gold: 5, comboMax: 5 }; // 콤보: 장애물 하나 넘을 때마다 min(콤보, 5)점
 
 const OBST = {

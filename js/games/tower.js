@@ -15,11 +15,11 @@ export const BH = 28;             // 풀빵 높이
 const STAGE_W = 360;
 const PERFECT = 3;                // 퍼펙트 허용 오차 (px)
 const PERFECT_GROW = 8;           // 퍼펙트 때 폭 회복
-const BASE_SPEED = 220;           // 처음 이동 속도 (px/s)
+const BASE_SPEED = 165;           // 처음 이동 속도 (px/s) — 보통 실력 ≈ 35코인 (시뮬레이션 기준)
 const SPEED_UP = 0.2;             // 5층마다 +20%
 const WIND_FROM = 10;
 export const COIN_PER_FLOOR = 1.5;
-export const PERFECT_COIN = 0.4;  // 퍼펙트 보너스 1점당 코인 (보통 실력 ≈ 25~29코인, 시뮬레이션 기준)
+export const PERFECT_COIN = 0.4;  // 퍼펙트 보너스 1점당 코인
 
 export function createTower(rnd = Math.random) {
   return {
