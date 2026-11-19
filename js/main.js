@@ -8,22 +8,17 @@ import { renderHome } from './home.js';
 import { renderCloset } from './closet.js';
 import { renderKuji } from './kuji.js';
 import { autoPaintScenes } from './pixel.js';
+import { renderAlbum } from './album.js';
 import { $, shuffle, today } from './util.js';
 
 const view = $('#view');
 const tabbar = $('#tabbar');
 const DEBUG = new URLSearchParams(location.search).has('debug');
 
-const placeholder = (ic, title, step) => (el) => {
-  el.innerHTML = `
-    <h2 class="h2">${ic} ${title}</h2>
-    <div class="card placeholder"><div class="ic">${ic}</div><p>${step}단계에서 만들어요</p></div>`;
-};
-
 const VIEWS = {
   home: { render: (el) => renderHome(el, { askReset }) },
   kuji: { render: (el) => renderKuji(el, { go, rerender }) },
-  album: { render: placeholder('🖼️', '사진첩', 6) },
+  album: { render: (el) => renderAlbum(el) }, // 엔딩 다시 보기는 10단계에서 연결
   closet: { render: renderCloset },
 };
 
@@ -114,6 +109,7 @@ function setupDebug() {
           <button type="button" class="btn" data-d="coin3000">코인 +3000 (40장 분량)</button>
           <button type="button" class="btn gray" data-d="items-all">아이템 전부 받기 (+왕관)</button>
           <button type="button" class="btn gray" data-d="items-half">아이템 절반 받기</button>
+          <button type="button" class="btn gray" data-d="mems-half">추억 절반 받기</button>
           <button type="button" class="btn gray" data-d="input">입력 모달 테스트</button>
           <button type="button" class="btn gray" data-d="state">저장 상태 보기</button>
           <button type="button" class="btn danger" data-d="reset">처음부터 다시하기</button>
@@ -131,6 +127,12 @@ function setupDebug() {
             pre.textContent = JSON.stringify(S, null, 2);
           }
           if (d === 'reset') { close(); askReset(); }
+          if (d === 'mems-half') {
+            const list = shuffle(MEMORIES.filter((m) => m.grade !== 'R')).slice(0, 6);
+            list.forEach((m) => { S.memories[m.id] ||= { at: today() }; });
+            save(); close(); rerender();
+            toast(`추억 ${list.length}개 받음`);
+          }
           if (d === 'items-all' || d === 'items-half') {
             const list = d === 'items-all' ? ITEMS : shuffle(COLLECT_ITEMS.slice()).slice(0, 12);
             list.forEach((i) => { S.items[i.id] ||= { at: today() }; });

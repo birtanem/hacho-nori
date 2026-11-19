@@ -456,6 +456,20 @@ button.tk:active { transform: translateY(2px); box-shadow: none; }
 .memv .cap { font-size: 1.05rem; line-height: 1.45; margin: 6px 0; }
 .memv .date { font-size: .8rem; color: var(--sub); margin: 0; }
 
+/* ---------- 사진첩 ---------- */
+.asec h4 { display: flex; align-items: center; gap: 8px; margin: 16px 0 8px; font-size: 1rem; }
+.asec h4 small { color: var(--sub); font-size: .85rem; }
+.album { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.album.one { grid-template-columns: 1fr; max-width: 70%; margin: 0 auto; }
+.acell { display: flex; flex-direction: column; gap: 6px; min-width: 0; text-align: center; }
+.acell span { font-size: .9rem; }
+button.acell:active .frame { transform: translateY(2px); }
+.acell .frame { width: 100%; max-width: none; padding: 6px; }
+.frame.lock { background: #c8d3dc; box-shadow: inset 0 0 0 3px #a9b6c1, 0 4px 0 #dde4ea; }
+.pix-box.q { background: #e3eaf0; color: #a9b6c1; font-size: 2rem; }
+.acell.lock span { color: #9aa9b8; }
+.ending-btn { display: block; width: 100%; margin: 4px 0 6px; background: linear-gradient(90deg, #ff8787, #ffc078, #ffe066, #8ce99a, #74c0fc, #b197fc); box-shadow: 0 3px 0 #9775fa; }
+
 /* ---------- 휴대폰 가로 모드 안내 ---------- */
 .rotate { display: none; }
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 500px) {
