@@ -16,7 +16,7 @@ const tabbar = $('#tabbar');
 const DEBUG = new URLSearchParams(location.search).has('debug');
 
 const VIEWS = {
-  home: { render: (el) => renderHome(el, { askReset }) },
+  home: { render: (el) => renderHome(el, { askReset, rerender }) },
   kuji: { render: (el) => renderKuji(el, { go, rerender }) },
   album: { render: (el) => renderAlbum(el) }, // 엔딩 다시 보기는 10단계에서 연결
   closet: { render: renderCloset },

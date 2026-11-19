@@ -4,6 +4,7 @@ import { S } from './state.js';
 import { GAME_LIST, HOME_LINES } from './data.js';
 import { hacho } from './hacho.js';
 import { toast } from './ui.js';
+import { isPlayable, openGame } from './games/engine.js';
 
 let lastLine = -1;
 function nextLine() {
@@ -13,7 +14,7 @@ function nextLine() {
   return HOME_LINES[i];
 }
 
-/** @param {HTMLElement} el  @param {{askReset:Function}} ctx */
+/** @param {HTMLElement} el  @param {{askReset:Function, rerender:Function}} ctx */
 export function renderHome(el, ctx) {
   el.innerHTML = `
     <div class="hero">
@@ -49,8 +50,12 @@ export function renderHome(el, ctx) {
     bubble.classList.add('pop');
   };
   const onClick = (e) => {
-    if (e.target.closest('[data-act="reset"]')) ctx.askReset();
-    else if (e.target.closest('[data-game]')) toast('게임은 7~9단계에서 만들어요');
+    if (e.target.closest('[data-act="reset"]')) { ctx.askReset(); return; }
+    const card = e.target.closest('[data-game]');
+    if (!card) return;
+    const id = card.dataset.game;
+    if (isPlayable(id)) openGame(id, { onClose: ctx.rerender });
+    else toast('이 게임은 곧 열려요 (8~9단계)');
   };
   el.addEventListener('pointerdown', poke);
   el.addEventListener('click', onClick);
