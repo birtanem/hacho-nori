@@ -161,6 +161,8 @@ const tubeArc = (front) => {
 
 /* ---------- 소품 ---------- */
 const PROP = {
+  // 🥝 두나: 하초 오른발 옆에 작게 (함수 호출 시점에 그려야 해서 지연 실행)
+  duna: () => `<g transform="translate(148 155) scale(.3)">${dunaInner()}</g>`,
   // 📿 목걸이: 진주 줄 + 가운데 펜던트
   necklace: () => {
     let pearls = '';
@@ -195,11 +197,6 @@ const FACE = {
 
 /* ---------- 머리 ---------- */
 const HEAD = {
-  // 🧶 털모자: 잎사귀 끝이 모자 위로 삐죽 나오게 낮게
-  beanie: () => `<path d="M60 76 Q60 50 100 50 Q140 50 140 76 Z" fill="#ff6b6b" stroke="#c94a4a" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M66 64 Q100 56 134 64 M62 71 Q100 63 138 71" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <rect x="56" y="72" width="88" height="13" rx="6.5" fill="#ffe3e3" stroke="#c94a4a" stroke-width="2.5"/>
-    <path d="M64 74 v9 M72 74 v9 M80 74 v9 M88 74 v9 M96 74 v9 M104 74 v9 M112 74 v9 M120 74 v9 M128 74 v9 M136 74 v9" stroke="#ffb3b3" stroke-width="2"/>`,
   flower: () => {
     const cx = 58, cy = 74;
     return dots([[cx, cy - 8], [cx + 8, cy - 2], [cx + 5, cy + 7], [cx - 5, cy + 7], [cx - 8, cy - 2]], 6, '#fff', 'stroke="#f2a7c0" stroke-width="1.5"') +
@@ -310,11 +307,14 @@ const DUNA_LIMBS = `<g stroke="${INK}" stroke-width="4.5" stroke-linecap="round"
 const DUNA_CURLS = [[78, 84], [112, 80], [134, 98], [64, 146], [140, 140], [100, 164], [70, 100], [124, 158]]
   .map(([x, y]) => `<path d="M${x - 4} ${y} a4 4 0 1 1 4 4" stroke="#9a5a2a" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>`).join('');
 
-export function duna({ label = '두나' } = {}) {
-  return `<svg class="char-svg" viewBox="${VB}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}">
-${DUNA_LIMBS}
+/** 두나 그림 본체 (SVG 안쪽 마크업, 하초와 같은 좌표계) */
+const dunaInner = () => `${DUNA_LIMBS}
 <path d="${DUNA_BODY}" fill="#c98a4b" stroke="#8a5427" stroke-width="3" stroke-linejoin="round"/>
 ${DUNA_CURLS}
 ${EYES}
-<path d="M92 121 L92 141 L116 131 Z" fill="#ffd23f" stroke="#c99400" stroke-width="3" stroke-linejoin="round"/></svg>`;
+<path d="M92 121 L92 141 L116 131 Z" fill="#ffd23f" stroke="#c99400" stroke-width="3" stroke-linejoin="round"/>`;
+
+export function duna({ label = '두나' } = {}) {
+  return `<svg class="char-svg" viewBox="${VB}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}">
+${dunaInner()}</svg>`;
 }

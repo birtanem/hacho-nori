@@ -36,7 +36,7 @@ export const SLOTS = [
 
 /* ---------- 꾸미기 아이템 (C 8 · D 16 + 왕관) ---------- */
 export const ITEMS = [
-  // 레어 (C상) 10개
+  // 레어 (C상) 11개 (두나는 아래 일반 목록 쪽에 있지만 레어)
   { id: 'bg_spring', grade: 'C', slot: 'bg', icon: '🌷', name: '봄날 배경' },
   { id: 'bg_star', grade: 'C', slot: 'bg', icon: '🌌', name: '별밤 배경' },
   { id: 'bg_xmas', grade: 'C', slot: 'bg', icon: '🎅', name: '크리스마스 배경' },
@@ -48,7 +48,7 @@ export const ITEMS = [
   { id: 'wand', grade: 'C', slot: 'hand', icon: '🪄', name: '요술봉' },
   { id: 'skateboard', grade: 'C', slot: 'foot', icon: '🛹', name: '스케이트보드' },
 
-  // 일반 (D상) 20개
+  // 일반 (D상) 19개
   { id: 'bg_sea', grade: 'D', slot: 'bg', icon: '🌊', name: '바다 배경' },
   { id: 'bg_winter', grade: 'D', slot: 'bg', icon: '⛄', name: '겨울 배경' },
   { id: 'parasol', grade: 'D', slot: 'hand', icon: '⛱️', name: '양산' },
@@ -67,21 +67,22 @@ export const ITEMS = [
   { id: 'blush', grade: 'D', slot: 'face', icon: '😊', name: '볼터치' },
   { id: 'book', grade: 'D', slot: 'hand', icon: '📖', name: '책' },
   { id: 'boots', grade: 'D', slot: 'foot', icon: '👢', name: '노란 장화' },
-  { id: 'beanie', grade: 'D', slot: 'head', icon: '🧶', name: '털모자' },
   { id: 'coffee', grade: 'D', slot: 'hand', icon: '☕', name: '따뜻한 커피잔' },
+  { id: 'duna', grade: 'C', slot: 'prop', icon: '🥝', name: '두나' },
 
   // 특별 (무지개 쿠지와 함께 지급, 수집 n/30 에는 포함하지 않음)
   { id: 'crown', grade: 'S', slot: 'head', icon: '👑', name: '왕관' },
 ];
 export const ITEM_BY_ID = Object.fromEntries(ITEMS.map((i) => [i.id, i]));
-export const COLLECT_ITEMS = ITEMS.filter((i) => i.grade === 'C' || i.grade === 'D'); // 30개 (C 10 · D 20)
+export const COLLECT_ITEMS = ITEMS.filter((i) => i.grade === 'C' || i.grade === 'D'); // 30개 (C 11 · D 19)
 
 /* ---------- 쿠지 ---------- */
 export const BOX_COUNT = 2;                                  // 1탄 → 2탄
-// 박스별 구성. 두 박스 합계 = 보상 개수 (A 4 · B 8 · C 10 · D 20) + E 8.
+// 박스별 구성. 두 박스 합계 = 보상 개수 (A 4 · B 8 · C 11 · D 19) + E 8.
+// C·D가 홀수라 1탄은 레어 하나 더, 2탄은 일반 하나 더 — 두 박스 모두 25장(5×5).
 // 마지막 박스(2탄)는 실제로는 '아직 안 나온 보상 수'로 만든다 (kuji.js) — 구성이 바뀐 저장값 대비.
 export const BOX_GRADES = [
-  { A: 2, B: 4, C: 5, D: 10, E: 4 }, // 1탄 25장 (5×5)
+  { A: 2, B: 4, C: 6, D: 9, E: 4 },  // 1탄 25장
   { A: 2, B: 4, C: 5, D: 10, E: 4 }, // 2탄 25장
 ];
 export const GRADES = {
