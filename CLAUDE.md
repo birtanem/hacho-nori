@@ -276,4 +276,6 @@ export const CONFIG = {
 3. Settings → Pages → Source: **Deploy from a branch**, Branch: `main` / `/ (root)`
 4. 주소: `https://<username>.github.io/hacho-nori/`
 
+- **배포할 때마다** push 전에 `sh dev/bump-version.sh` 실행 → `index.html`의 `?v=` 숫자가 올라가서, 브라우저가 예전 JS·CSS를 섞어 쓰지 않음 (import map으로 모든 모듈 버전 고정). 새 JS 파일을 추가하면 `index.html` import map에도 한 줄 추가.
+
 주의: GitHub Pages 페이지는 **링크를 아는 누구나 볼 수 있음** (추억 문장 포함).
