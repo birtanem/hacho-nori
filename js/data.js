@@ -36,17 +36,19 @@ export const SLOTS = [
 
 /* ---------- 꾸미기 아이템 (C 8 · D 16 + 왕관) ---------- */
 export const ITEMS = [
-  // 레어 (C상)
+  // 레어 (C상) 10개
   { id: 'bg_spring', grade: 'C', slot: 'bg', icon: '🌷', name: '봄날 배경' },
   { id: 'bg_star', grade: 'C', slot: 'bg', icon: '🌌', name: '별밤 배경' },
   { id: 'bg_xmas', grade: 'C', slot: 'bg', icon: '🎅', name: '크리스마스 배경' },
+  { id: 'bg_rain', grade: 'C', slot: 'bg', icon: '🌧️', name: '비오는날 배경' },
+  { id: 'necklace', grade: 'C', slot: 'prop', icon: '📿', name: '목걸이' },
   { id: 'hula_skirt', grade: 'C', slot: 'outfit', icon: '🌴', name: '훌라치마' },
   { id: 'sunglasses', grade: 'C', slot: 'face', icon: '🕶️', name: '선글라스' },
   { id: 'camera', grade: 'C', slot: 'hand', icon: '📷', name: '카메라' },
   { id: 'wand', grade: 'C', slot: 'hand', icon: '🪄', name: '요술봉' },
   { id: 'skateboard', grade: 'C', slot: 'foot', icon: '🛹', name: '스케이트보드' },
 
-  // 일반 (D상)
+  // 일반 (D상) 20개
   { id: 'bg_sea', grade: 'D', slot: 'bg', icon: '🌊', name: '바다 배경' },
   { id: 'bg_winter', grade: 'D', slot: 'bg', icon: '⛄', name: '겨울 배경' },
   { id: 'parasol', grade: 'D', slot: 'hand', icon: '⛱️', name: '양산' },
@@ -63,16 +65,25 @@ export const ITEMS = [
   { id: 'ribbon', grade: 'D', slot: 'head', icon: '🎀', name: '리본' },
   { id: 'glasses', grade: 'D', slot: 'face', icon: '👓', name: '안경' },
   { id: 'blush', grade: 'D', slot: 'face', icon: '😊', name: '볼터치' },
+  { id: 'book', grade: 'D', slot: 'hand', icon: '📖', name: '책' },
+  { id: 'boots', grade: 'D', slot: 'foot', icon: '👢', name: '노란 장화' },
+  { id: 'beanie', grade: 'D', slot: 'head', icon: '🧶', name: '털모자' },
+  { id: 'coffee', grade: 'D', slot: 'hand', icon: '☕', name: '따뜻한 커피잔' },
 
-  // 특별 (무지개 쿠지와 함께 지급, 수집 n/24 에는 포함하지 않음)
+  // 특별 (무지개 쿠지와 함께 지급, 수집 n/30 에는 포함하지 않음)
   { id: 'crown', grade: 'S', slot: 'head', icon: '👑', name: '왕관' },
 ];
 export const ITEM_BY_ID = Object.fromEntries(ITEMS.map((i) => [i.id, i]));
-export const COLLECT_ITEMS = ITEMS.filter((i) => i.grade === 'C' || i.grade === 'D'); // 24개
+export const COLLECT_ITEMS = ITEMS.filter((i) => i.grade === 'C' || i.grade === 'D'); // 30개 (C 10 · D 20)
 
 /* ---------- 쿠지 ---------- */
 export const BOX_COUNT = 2;                                  // 1탄 → 2탄
-export const BOX_GRADES = { A: 2, B: 4, C: 4, D: 8, E: 4 };  // 한 박스 22장 (두 박스 합계 E 8장)
+// 박스별 구성. 두 박스 합계 = 보상 개수 (A 4 · B 8 · C 10 · D 20) + E 8.
+// 마지막 박스(2탄)는 실제로는 '아직 안 나온 보상 수'로 만든다 (kuji.js) — 구성이 바뀐 저장값 대비.
+export const BOX_GRADES = [
+  { A: 2, B: 4, C: 5, D: 10, E: 4 }, // 1탄 25장 (5×5)
+  { A: 2, B: 4, C: 5, D: 10, E: 4 }, // 2탄 25장
+];
 export const GRADES = {
   A: { label: 'A상', prize: '추억조각' },
   B: { label: 'B상', prize: '추억조각' },

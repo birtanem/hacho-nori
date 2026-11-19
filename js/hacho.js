@@ -82,6 +82,20 @@ const BG = {
     <path d="M176 226 l10 -12 l10 12 Z" fill="#ffb3c1" stroke="#e48aa0" stroke-width="2" stroke-linejoin="round"/>
     <path d="M10 6 q6 -6 12 0 q6 -6 12 0" stroke="#7a8a9a" stroke-width="2" fill="none"/>`,
 
+  bg_rain: (id) => {
+    const drops = [[-8, 0], [18, 22], [44, -6], [70, 30], [96, 4], [122, 26], [148, -2], [174, 20], [200, 6], [6, 60], [32, 88], [58, 70],
+      [150, 66], [176, 92], [204, 74], [-6, 130], [24, 156], [182, 140], [208, 166], [10, 190], [196, 196], [40, 120], [160, 118]];
+    return `
+    <defs><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b9bb0"/><stop offset="1" stop-color="#c8d3df"/></linearGradient></defs>
+    ${bgRect(`url(#${id}g)`)}
+    <g fill="#6f7d90"><ellipse cx="20" cy="-6" rx="46" ry="20"/><ellipse cx="88" cy="-12" rx="40" ry="18"/><ellipse cx="170" cy="-4" rx="52" ry="22"/></g>
+    <g fill="#7f8ca0"><ellipse cx="54" cy="8" rx="30" ry="12"/><ellipse cx="136" cy="10" rx="34" ry="13"/></g>
+    <g stroke="#eef4fa" stroke-width="2" stroke-linecap="round" opacity=".75">${drops.map(([x, y]) => `<line x1="${x}" y1="${y + 20}" x2="${x - 4}" y2="${y + 31}"/>`).join('')}</g>
+    <rect x="-20" y="206" width="240" height="44" fill="#9db58c"/>
+    <ellipse cx="22" cy="226" rx="24" ry="6" fill="#b9d3ea"/><ellipse cx="176" cy="234" rx="30" ry="7" fill="#b9d3ea"/>
+    <g fill="none" stroke="#e3eef8" stroke-width="1.5"><ellipse cx="22" cy="226" rx="10" ry="2.5"/><ellipse cx="176" cy="234" rx="14" ry="3"/></g>`;
+  },
+
   bg_winter: (id) => `
     <defs><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfdcec"/><stop offset="1" stop-color="#e8eff7"/></linearGradient></defs>
     ${bgRect(`url(#${id}g)`)}
@@ -124,14 +138,19 @@ const OUTFIT = {
     <rect x="96" y="150" width="8" height="8" rx="1.5" fill="#ffd43b" stroke="#c99400" stroke-width="1.5"/>`,
 
   // 후드와 코트를 한 덩어리로 그리고, 얼굴 부분만 구멍(evenodd). 후드는 머리 크기에 딱 맞게, 잎은 그리지 않음.
-  raincoat: () => `
-    <path fill-rule="evenodd" d="M36 196 L41 152 C30 100 52 56 100 56 C148 56 170 100 159 152 L164 196 Q100 208 36 196 Z
+  // 장화를 신으면 장화와 겹치지 않게 아랫단을 12 짧게
+  raincoat: (id, equip = {}) => {
+    const b = equip.foot === 'boots' ? 184 : 196;   // 옆단 높이
+    const k = 196 - b;
+    return `
+    <path fill-rule="evenodd" d="M36 ${b} L41 152 C30 100 52 56 100 56 C148 56 170 100 159 152 L164 ${b} Q100 ${b + 12} 36 ${b} Z
       M54 150 C50 106 70 74 100 74 C130 74 150 106 146 150 Q100 162 54 150 Z" fill="#ffd43b" stroke="#d4a017" stroke-width="2.5" stroke-linejoin="round"/>
     <path d="M56 146 C53 106 72 78 100 78 C128 78 147 106 144 146" stroke="#e8b923" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <path d="M100 157 V203" stroke="#d4a017" stroke-width="2.5"/>
+    <path d="M100 157 V${203 - k}" stroke="#d4a017" stroke-width="2.5"/>
     <path d="M87 153 L100 163 L113 153" fill="#ffe680" stroke="#d4a017" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M60 182 h14 M126 182 h14" stroke="#d4a017" stroke-width="2.5" stroke-linecap="round"/>
-    ${dots([[107, 172], [107, 186]], 2.5, '#d4a017')}`,
+    <path d="M60 ${182 - k / 2} h14 M126 ${182 - k / 2} h14" stroke="#d4a017" stroke-width="2.5" stroke-linecap="round"/>
+    ${dots([[107, 172], [107, 186 - k / 2]], 2.5, '#d4a017')}`;
+  },
 };
 
 const tubeArc = (front) => {
@@ -142,6 +161,18 @@ const tubeArc = (front) => {
 
 /* ---------- 소품 ---------- */
 const PROP = {
+  // 📿 목걸이: 진주 줄 + 가운데 펜던트
+  necklace: () => {
+    let pearls = '';
+    for (let i = 0; i <= 12; i++) {
+      const t = i / 12;
+      const x = (1 - t) ** 2 * 60 + 2 * (1 - t) * t * 100 + t * t * 140;
+      const y = (1 - t) ** 2 * 147 + 2 * (1 - t) * t * 170 + t * t * 147;  // 입(아래 끝 y145)보다 아래
+      pearls += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="#fffaf0" stroke="#d8cbb4" stroke-width="1.2"/>`;
+    }
+    return pearls + `<path d="M100 160 l7 9 l-7 10 l-7 -10 Z" fill="#ffd23f" stroke="#c99400" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="100" cy="169" r="2.6" fill="#ff8fb1"/>`;
+  },
   tube: () => tubeArc(true),
   scarf: () => `<path d="M50 148 Q100 172 150 148 L150 160 Q100 184 50 160 Z" fill="#e74c3c" stroke="#a83226" stroke-width="2"/>
     <rect x="118" y="160" width="15" height="32" rx="4" fill="#e74c3c" stroke="#a83226" stroke-width="2"/>
@@ -164,6 +195,11 @@ const FACE = {
 
 /* ---------- 머리 ---------- */
 const HEAD = {
+  // 🧶 털모자: 잎사귀 끝이 모자 위로 삐죽 나오게 낮게
+  beanie: () => `<path d="M60 76 Q60 50 100 50 Q140 50 140 76 Z" fill="#ff6b6b" stroke="#c94a4a" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M66 64 Q100 56 134 64 M62 71 Q100 63 138 71" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <rect x="56" y="72" width="88" height="13" rx="6.5" fill="#ffe3e3" stroke="#c94a4a" stroke-width="2.5"/>
+    <path d="M64 74 v9 M72 74 v9 M80 74 v9 M88 74 v9 M96 74 v9 M104 74 v9 M112 74 v9 M120 74 v9 M128 74 v9 M136 74 v9" stroke="#ffb3b3" stroke-width="2"/>`,
   flower: () => {
     const cx = 58, cy = 74;
     return dots([[cx, cy - 8], [cx + 8, cy - 2], [cx + 5, cy + 7], [cx - 5, cy + 7], [cx - 8, cy - 2]], 6, '#fff', 'stroke="#f2a7c0" stroke-width="1.5"') +
@@ -179,6 +215,19 @@ const HEAD = {
 
 /* ---------- 손 ---------- */
 const HAND = {
+  // 📖 책: 왼손(18,98)에 펼쳐 든 모양 — 몸 앞 원래 그림을 작게 줄여 왼손 위치로
+  book: () => `<g transform="translate(12 104) rotate(-14) scale(.7) translate(-100 -170)">
+    <path d="M68 158 Q84 151 100 160 Q116 151 132 158 V186 Q116 179 100 188 Q84 179 68 186 Z" fill="#4dabf7" stroke="#1c7ed6" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M72 158 Q86 153 100 161 V184 Q86 177 72 182 Z M128 158 Q114 153 100 161 V184 Q114 177 128 182 Z" fill="#ffffff" stroke="#c5d3e0" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M77 164 Q86 161 95 165 M77 169 Q86 166 95 170 M77 174 Q86 171 95 175 M105 165 Q114 161 123 164 M105 170 Q114 166 123 169" stroke="#b0bccb" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M118 150 V164 L121 161 L124 164 V150" fill="#ff6b81"/></g>`,
+  // ☕ 따뜻한 커피잔: 오른손(182,98)에 든 머그 + 김
+  coffee: () => `<path d="M184 86 q-4 -5 0 -10 q4 -5 0 -10 M192 86 q-4 -5 0 -10 q4 -5 0 -10" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".9"/>
+    <path d="M184 86 q-4 -5 0 -10 q4 -5 0 -10 M192 86 q-4 -5 0 -10 q4 -5 0 -10" stroke="#c9b8a6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M200 96 h4 a6 6 0 0 1 0 12 h-4" fill="none" stroke="#8a5a3a" stroke-width="3"/>
+    <path d="M176 92 h24 v16 a6 6 0 0 1 -6 6 h-12 a6 6 0 0 1 -6 -6 Z" fill="#fff8ee" stroke="#8a5a3a" stroke-width="2.5" stroke-linejoin="round"/>
+    <ellipse cx="188" cy="93" rx="11" ry="2.6" fill="#7a4a2a"/>
+    <rect x="176" y="100" width="24" height="5" fill="#ff8fa3"/>`,
   wand: () => `<line x1="182" y1="98" x2="186" y2="64" stroke="#8a5a3a" stroke-width="4.5" stroke-linecap="round"/>
     <path d="${star(185, 52, 12)}" fill="#ffd23f" stroke="#c99400" stroke-width="2.5" stroke-linejoin="round"/>
     ${dots([[168, 40], [204, 44], [196, 30]], 2, '#ffe27a')}`,
@@ -196,6 +245,11 @@ const HAND = {
 
 /* ---------- 발 ---------- */
 const FOOT = {
+  boots: () => `<g fill="#ffd43b" stroke="#d4a017" stroke-width="2.5" stroke-linejoin="round">
+      <path d="M71 190 H87 V208 Q87 214 81 214 H64 Q59 214 59 210 Q59 206 65 206 H71 Z"/>
+      <path d="M113 190 H129 V206 H135 Q141 206 141 210 Q141 214 136 214 H119 Q113 214 113 208 Z"/></g>
+    <g fill="#ffe680" stroke="#d4a017" stroke-width="2"><rect x="69" y="187" width="20" height="6" rx="3"/><rect x="111" y="187" width="20" height="6" rx="3"/></g>
+    <path d="M60 213 H86 M114 213 H140" stroke="#b07800" stroke-width="2.5" stroke-linecap="round"/>`,
   skateboard: () => `<rect x="54" y="207" width="92" height="9" rx="4.5" fill="#ff9f43" stroke="#b56a1f" stroke-width="2.5"/>
     <circle cx="74" cy="221" r="6" fill="#444"/><circle cx="126" cy="221" r="6" fill="#444"/>`,
 };
@@ -222,7 +276,7 @@ export function hacho(equip = {}, { bg = true, label = '하초' } = {}) {
   const id = 'h' + ++uid;
   const L = (slot) => {
     const f = LAYERS[slot][equip[slot]];
-    return f ? f(id) : '';
+    return f ? f(id, equip) : '';
   };
   const B = (slot) => {
     const f = BEHIND[slot] && BEHIND[slot][equip[slot]];

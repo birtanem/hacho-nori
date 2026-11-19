@@ -2,7 +2,7 @@
 // 각 화면은 render(el)을 가지며, 정리할 것이 있으면 cleanup 함수를 돌려준다.
 import { CONFIG } from './config.js';
 import { S, subscribe, save, reset, addCoins } from './state.js';
-import { MEMORIES, ITEMS, COLLECT_ITEMS } from './data.js';
+import { MEMORIES, ITEMS, ITEM_BY_ID, COLLECT_ITEMS } from './data.js';
 import { toast, confirmModal, openModal, inputModal } from './ui.js';
 import { renderHome } from './home.js';
 import { renderCloset } from './closet.js';
@@ -111,7 +111,7 @@ function setupDebug() {
           <button type="button" class="btn gray" data-d="items-all">아이템 전부 받기 (+왕관)</button>
           <button type="button" class="btn gray" data-d="items-half">아이템 절반 받기</button>
           <button type="button" class="btn gray" data-d="mems-half">추억 절반 받기</button>
-          <button type="button" class="btn gray" data-d="all36">36개 다 모은 상태로 (무지개 직전)</button>
+          <button type="button" class="btn gray" data-d="all36">보상 전부 모은 상태로 (무지개 직전)</button>
           <button type="button" class="btn gray" data-d="ending">엔딩 바로 보기</button>
           <button type="button" class="btn gray" data-d="input">입력 모달 테스트</button>
           <button type="button" class="btn gray" data-d="state">저장 상태 보기</button>
@@ -163,6 +163,16 @@ function setupDebug() {
 }
 
 /* ---------- 시작 ---------- */
+// 아이템 부위가 바뀐 경우(예: 책·커피잔 소품 → 손) 입고 있던 것을 맞는 부위로 옮김
+(function fixEquipSlots() {
+  let changed = false;
+  for (const [slot, id] of Object.entries(S.equip)) {
+    const it = ITEM_BY_ID[id];
+    if (!it) { delete S.equip[slot]; changed = true; continue; }
+    if (it.slot !== slot) { delete S.equip[slot]; S.equip[it.slot] = id; changed = true; }
+  }
+  if (changed) save();
+})();
 paintCoins();
 autoPaintScenes();
 if (DEBUG) setupDebug();

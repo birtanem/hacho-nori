@@ -31,7 +31,7 @@ function chip(it) {
 export function renderCloset(el) {
   const n = COLLECT_ITEMS.filter((i) => owned(i.id)).length;
   const sections = SLOTS.map((s) => {
-    // 왕관(특별 아이템)은 받기 전에는 자리도 보여주지 않음 — 수집 n/24 와 맞추기 위해
+    // 왕관(특별 아이템)은 받기 전에는 자리도 보여주지 않음 — 수집 n/30 과 맞추기 위해
     const list = ITEMS.filter((i) => i.slot === s.id && (i.grade !== 'S' || owned(i.id)));
     return `<section class="slot"><h4>${s.name}</h4><div class="chips">${list.map(chip).join('')}</div></section>`;
   }).join('');

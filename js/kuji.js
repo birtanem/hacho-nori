@@ -1,6 +1,6 @@
 // 쿠지: 박스 생성 · 뽑기 처리 · 보드 화면 · 결과 모달
 // 종이의 "등급"만 박스를 만들 때 섞어 두고, 등급 안에서 무엇이 나올지는 뽑는 순간
-// 아직 안 나온 것 중에서 고른다 → 중복 없음, 40장을 다 뽑으면 36개가 정확히 모임.
+// 아직 안 나온 것 중에서 고른다 → 중복 없음, 두 박스를 다 뽑으면 42개가 정확히 모임.
 import { CONFIG } from './config.js';
 import { S, save } from './state.js';
 import { MEMORIES, MEMORY_BY_ID, ITEMS, ITEM_BY_ID, COLLECT_ITEMS, BOX_COUNT, BOX_GRADES, GRADES } from './data.js';
@@ -11,17 +11,47 @@ import { memoryFrame, showMemory } from './album.js';
 import { playEnding } from './ending.js';
 import { pick, shuffle, today } from './util.js';
 
-const PAPERS = Object.values(BOX_GRADES).reduce((a, b) => a + b, 0); // 22
 const GRADE_ORDER = ['A', 'B', 'C', 'D', 'E'];
 const COLLECT_MEMORIES = MEMORIES.filter((m) => m.grade === 'A' || m.grade === 'B'); // 12
-export const TOTAL_COLLECT = COLLECT_MEMORIES.length + COLLECT_ITEMS.length;      // 36
+export const TOTAL_COLLECT = COLLECT_MEMORIES.length + COLLECT_ITEMS.length; // 42
 
 export const refundAmount = () => CONFIG.eRefund;
 
 /* ---------- 상태 도우미 ---------- */
-function makeBox() {
+const countBy = (arr) => arr.reduce((o, g) => { o[g] = (o[g] || 0) + 1; return o; }, {});
+
+/** 아직 안 나온 보상 수 (등급별) */
+function remainingRewards() {
+  return {
+    A: MEMORIES.filter((m) => m.grade === 'A' && !S.memories[m.id]).length,
+    B: MEMORIES.filter((m) => m.grade === 'B' && !S.memories[m.id]).length,
+    C: ITEMS.filter((i) => i.grade === 'C' && !S.items[i.id]).length,
+    D: ITEMS.filter((i) => i.grade === 'D' && !S.items[i.id]).length,
+  };
+}
+
+/**
+ * 지금 박스에서 '아직 안 뽑은 종이'가 가져야 할 등급 수.
+ * - 마지막 박스: 남은 보상 전부 (예전 구성으로 앞 박스를 뽑은 저장값이어도 반드시 다 모이게)
+ * - 그 밖: 박스 구성 − 이미 뽑은 것
+ */
+function wantedClosed(box, boxNo) {
+  const comp = BOX_GRADES[boxNo - 1];
+  const opened = countBy(box ? box.opened.map((i) => box.papers[i]) : []);
+  const want = {};
+  if (boxNo === BOX_COUNT) {
+    Object.assign(want, remainingRewards());
+    want.E = Math.max(0, comp.E - (opened.E || 0));
+  } else {
+    for (const g of GRADE_ORDER) want[g] = Math.max(0, comp[g] - (opened[g] || 0));
+  }
+  return want;
+}
+
+function makeBox(boxNo) {
+  const want = wantedClosed(null, boxNo);
   const papers = [];
-  for (const g of GRADE_ORDER) for (let i = 0; i < BOX_GRADES[g]; i++) papers.push(g);
+  for (const g of GRADE_ORDER) for (let i = 0; i < want[g]; i++) papers.push(g);
   return { papers: shuffle(papers), opened: [] };
 }
 
@@ -29,23 +59,24 @@ function makeBox() {
 export function ensureBox() {
   if (S.boxNo > BOX_COUNT) { S.box = null; return null; }
   const b = S.box;
-  if (!b || !Array.isArray(b.papers) || !Array.isArray(b.opened)) { S.box = makeBox(); save(); return S.box; }
-  if (b.papers.length !== PAPERS) { migrateBox(b); save(); }
+  if (!b || !Array.isArray(b.papers) || !Array.isArray(b.opened)) { S.box = makeBox(S.boxNo); save(); return S.box; }
+  // 구성이 바뀐 저장값(아이템 추가 등)이면 안 뽑은 종이만 다시 맞춘다
+  const want = wantedClosed(b, S.boxNo);
+  const closed = countBy(b.papers.filter((_, i) => !b.opened.includes(i)));
+  if (GRADE_ORDER.some((g) => (closed[g] || 0) !== want[g])) { migrateBox(b, want); save(); }
   return S.box;
 }
 
-// 박스 구성이 바뀐 저장값(예: 예전 20장 박스)을 이어서 쓸 수 있게: 이미 뽑은 종이는 그대로 두고,
-// 모자란 등급 종이를 추가한 뒤 아직 안 뽑은 칸끼리만 다시 섞는다.
-function migrateBox(b) {
-  const have = {};
-  b.papers.forEach((g) => { have[g] = (have[g] || 0) + 1; });
-  for (const g of GRADE_ORDER) for (let i = have[g] || 0; i < BOX_GRADES[g]; i++) b.papers.push(g);
-  const closed = b.papers.map((_, i) => i).filter((i) => !b.opened.includes(i));
-  const grades = shuffle(closed.map((i) => b.papers[i]));
-  closed.forEach((i, k) => { b.papers[i] = grades[k]; });
+// 이미 뽑은 종이는 등급·순서 그대로 앞쪽에 두고, 안 뽑은 종이를 원하는 구성으로 새로 섞어 붙인다.
+function migrateBox(b, want) {
+  const openedGrades = b.opened.map((i) => b.papers[i]);
+  const rest = [];
+  for (const g of GRADE_ORDER) for (let i = 0; i < want[g]; i++) rest.push(g);
+  b.papers = [...openedGrades, ...shuffle(rest)];
+  b.opened = openedGrades.map((_, i) => i);
 }
 
-/** 모은 개수 (무지개 진행도 n/36) */
+/** 모은 개수 (무지개 진행도 n/42) */
 export function collectedCount() {
   return COLLECT_MEMORIES.filter((m) => S.memories[m.id]).length +
     COLLECT_ITEMS.filter((i) => S.items[i.id]).length;
@@ -53,7 +84,7 @@ export function collectedCount() {
 
 export const allCollected = () => collectedCount() === TOTAL_COLLECT;
 
-/** 무지개 쿠지 (무료): 36개를 다 모았을 때 한 번. 무지개 조각 + 왕관 지급. */
+/** 무지개 쿠지 (무료): 42개를 다 모았을 때 한 번. 무지개 조각 + 왕관 지급. */
 export function claimRainbow() {
   if (!allCollected() || S.memories.rainbow) return null;
   S.memories.rainbow = { at: today() };
@@ -93,17 +124,17 @@ function award(g) {
 export function drawPaper(index) {
   const box = ensureBox();
   if (!box) return { ok: false, reason: 'done' };
-  if (!(index >= 0 && index < PAPERS) || box.opened.includes(index)) return { ok: false, reason: 'opened' };
+  if (!(index >= 0 && index < box.papers.length) || box.opened.includes(index)) return { ok: false, reason: 'opened' };
   if (S.coins < CONFIG.kujiPrice) return { ok: false, reason: 'coins' };
 
   S.coins -= CONFIG.kujiPrice;
   box.opened.push(index);
   const result = award(box.papers[index]);
 
-  const boxDone = box.opened.length === PAPERS;
+  const boxDone = box.opened.length === box.papers.length;
   if (boxDone) {
     S.boxNo += 1;
-    S.box = S.boxNo <= BOX_COUNT ? makeBox() : null;
+    S.box = S.boxNo <= BOX_COUNT ? makeBox(S.boxNo) : null;
   }
   save();
   return { ok: true, result, boxDone, allDone: boxDone && S.boxNo > BOX_COUNT };
@@ -114,10 +145,10 @@ const badge = (g) => `<span class="gb g${g}">${GRADES[g].label}</span>`;
 
 function boardHTML() {
   const box = S.box;
-  const total = { ...BOX_GRADES };
+  const total = { A: 0, B: 0, C: 0, D: 0, E: 0, ...countBy(box.papers) };
   const left = { A: 0, B: 0, C: 0, D: 0, E: 0 };
   box.papers.forEach((g, i) => { if (!box.opened.includes(i)) left[g]++; });
-  const remain = PAPERS - box.opened.length;
+  const remain = box.papers.length - box.opened.length;
 
   const SHORT = { A: '추억조각', B: '추억조각', C: '레어 아이템', D: '아이템', E: '하초의용기' };
   const rows = GRADE_ORDER.map((g) => `
@@ -133,7 +164,7 @@ function boardHTML() {
   return `
     <div class="khead">
       <h2 class="h2">🎫 하초 쿠지 <small>제${S.boxNo}탄</small></h2>
-      <span class="kleft">남은 <b>${remain}</b>/${PAPERS}장</span>
+      <span class="kleft">남은 <b>${remain}</b>/${box.papers.length}장</span>
     </div>
     <p class="kinfo">🌈 ${BOX_COUNT}탄까지 모든 쿠지를 모으면 <b>무지개 쿠지</b>가 열려요</p>
     <div class="prizes">${rows}</div>
