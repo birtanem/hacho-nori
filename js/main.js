@@ -9,6 +9,7 @@ import { renderCloset } from './closet.js';
 import { renderKuji } from './kuji.js';
 import { autoPaintScenes } from './pixel.js';
 import { renderAlbum } from './album.js';
+import { playEnding } from './ending.js';
 import { $, shuffle, today } from './util.js';
 
 const view = $('#view');
@@ -18,7 +19,7 @@ const DEBUG = new URLSearchParams(location.search).has('debug');
 const VIEWS = {
   home: { render: (el) => renderHome(el, { askReset, rerender }) },
   kuji: { render: (el) => renderKuji(el, { go, rerender }) },
-  album: { render: (el) => renderAlbum(el) }, // 엔딩 다시 보기는 10단계에서 연결
+  album: { render: (el) => renderAlbum(el, { replayEnding: () => playEnding({ go }) }) },
   closet: { render: renderCloset },
 };
 
@@ -110,6 +111,8 @@ function setupDebug() {
           <button type="button" class="btn gray" data-d="items-all">아이템 전부 받기 (+왕관)</button>
           <button type="button" class="btn gray" data-d="items-half">아이템 절반 받기</button>
           <button type="button" class="btn gray" data-d="mems-half">추억 절반 받기</button>
+          <button type="button" class="btn gray" data-d="all36">36개 다 모은 상태로 (무지개 직전)</button>
+          <button type="button" class="btn gray" data-d="ending">엔딩 바로 보기</button>
           <button type="button" class="btn gray" data-d="input">입력 모달 테스트</button>
           <button type="button" class="btn gray" data-d="state">저장 상태 보기</button>
           <button type="button" class="btn danger" data-d="reset">처음부터 다시하기</button>
@@ -127,6 +130,15 @@ function setupDebug() {
             pre.textContent = JSON.stringify(S, null, 2);
           }
           if (d === 'reset') { close(); askReset(); }
+          if (d === 'all36') {
+            MEMORIES.filter((m) => m.grade !== 'R').forEach((m) => { S.memories[m.id] ||= { at: today() }; });
+            COLLECT_ITEMS.forEach((i) => { S.items[i.id] ||= { at: today() }; });
+            delete S.memories.rainbow; delete S.items.crown;
+            S.boxNo = 3; S.box = null; S.endingSeen = false;
+            save(); close(); go('kuji'); rerender();
+            toast('무지개 쿠지 직전 상태');
+          }
+          if (d === 'ending') { close(); playEnding({ go }); }
           if (d === 'mems-half') {
             const list = shuffle(MEMORIES.filter((m) => m.grade !== 'R')).slice(0, 6);
             list.forEach((m) => { S.memories[m.id] ||= { at: today() }; });

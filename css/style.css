@@ -453,6 +453,7 @@ button.tk:active { transform: translateY(2px); box-shadow: none; }
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+.memv .m-title { margin-top: 4px; }   /* 액자 아래 그림자(4px)에 이름이 걸리지 않게 */
 .memv .cap { font-size: 1.05rem; line-height: 1.45; margin: 6px 0; }
 .memv .date { font-size: .8rem; color: var(--sub); margin: 0; }
 
@@ -576,6 +577,65 @@ button.acell:active .frame { transform: translateY(2px); }
 
 /* 🍃 잎사귀 받기 */
 .gcv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+/* ---------- 쿠지 완성 ---------- */
+.kdone.complete { border-color: #d0bfff; background: linear-gradient(#fff, #f6f0ff); }
+.kdone-title { font-size: 1.4rem; margin: 4px 0; }
+.kdone-sub { color: var(--sub); font-size: .9rem; margin: 0 0 4px; }
+
+/* ---------- 엔딩 ---------- */
+.ending {
+  position: absolute; inset: 0; z-index: 20; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: calc(16px + var(--safe-t)) 16px calc(16px + var(--safe-b));
+  text-align: center; cursor: pointer;
+  background: #fff8ee;
+  animation: fade .4s;
+}
+.e-slide-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+.e-slide-wrap.flip { animation: eFlip .45s ease-out; }
+@keyframes eFlip { from { transform: perspective(700px) rotateY(80deg) scale(.9); opacity: 0; } }
+.e-frame { width: min(80vw, 320px); max-width: none; }
+.e-name { margin: 10px 0 0; font-size: 1.1rem; }
+.e-cap { margin: 2px 0; font-size: 1.25rem; line-height: 1.45; min-height: 2.9em; }
+.e-count { margin: 0; color: var(--sub); font-size: .85rem; }
+.e-skip { position: absolute; bottom: calc(14px + var(--safe-b)); margin: 0; color: #b0bccb; font-size: .85rem; }
+
+.e-rainbow { background: #eaf7ff; }
+.e-white { position: absolute; inset: 0; background: #fff; z-index: 2; pointer-events: none; animation: eWhite 1.8s ease-in-out forwards; }
+@keyframes eWhite { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.e-big { width: 100%; display: flex; justify-content: center; animation: eGrow 1.6s ease-out; }
+@keyframes eGrow { 0%, 30% { transform: scale(.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.e-rframe { width: min(92vw, 460px); max-width: none; }
+
+.e-dance { justify-content: flex-start; padding: 0; background: linear-gradient(#cfefff, #f4fbff); }
+.e-scene { position: relative; flex: 0 0 60%; width: 100%; }
+.e-arc {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: min(140vw, 640px); aspect-ratio: 2 / 1;
+  border-radius: 640px 640px 0 0;
+  background: radial-gradient(circle at 50% 100%, transparent 44%, #9775fa 44% 47%, #4dabf7 47% 50%, #69db7c 50% 53%, #ffe066 53% 56%, #ffa94d 56% 59%, #ff6b6b 59% 62%, transparent 62%);
+  opacity: .85; animation: fade 1s;
+}
+.e-pair { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; }
+/* SVG 아래쪽 여백(발 아래 ≈ 15%)만큼 내려서 발이 풀밭 경계에 닿게 */
+.e-hacho, .e-duna { width: min(36vw, 170px); margin-bottom: calc(min(36vw, 170px) * -0.17); }
+.e-hacho { margin-right: -6%; animation: eBounce .7s ease-in-out infinite; }
+.e-duna { margin-left: -6%; animation: eBounce .7s ease-in-out .35s infinite; }
+.e-hand { position: relative; z-index: 2; align-self: center; font-size: 1.6rem; animation: eBounce .7s ease-in-out .17s infinite; }
+@keyframes eBounce { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-18px) scale(1.03, .97); } 60% { transform: translateY(-14px); } }
+.e-grass { flex: 1; width: 100%; padding: 28px 16px calc(16px + var(--safe-b)); background: linear-gradient(#c8ecae, #b5e08f); }
+.e-line { position: relative; margin: 0; font-size: 1.45rem; line-height: 1.4; animation: pop .6s; }
+
+.e-end { background: linear-gradient(#f6f0ff, #fff8ee); cursor: default; }
+.e-end-box { position: relative; z-index: 2; }
+.e-fin { margin: 0; font-size: 4.2rem; line-height: 1.1; animation: pop .6s; }
+.e-mini { display: flex; justify-content: center; margin: 4px 0 6px; }
+.e-mini svg { width: 96px; height: auto; }
+
+.e-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.e-confetti i { position: absolute; top: -16px; width: 8px; height: 12px; border-radius: 2px; animation: eFall 3s linear infinite; }
+@keyframes eFall { to { transform: translateY(110vh) rotate(540deg); } }
 
 /* ---------- 휴대폰 가로 모드 안내 ---------- */
 .rotate { display: none; }

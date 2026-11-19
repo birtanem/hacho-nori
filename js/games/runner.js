@@ -24,7 +24,7 @@ const OBST = {
   log:      { w: 14, h: 6, yb: 0,  p: 0.2 },
   puddle:   { w: 16, h: 1, yb: 0,  p: 0.18 },
   mushroom: { w: 5,  h: 5, yb: 0,  p: 0.16 },
-  bee:      { w: 8,  h: 6, yb: 19, p: 0.22 }, // 서 있는 하초(키 13) 위, 점프 높이에 떠 있음
+  bee:      { w: 8,  h: 6, yb: 19, p: 0.22 }, // 서 있는 하초(키 13) 위에 그려짐. 판정은 '점프 중이면 쿵'
 };
 
 export function createWorld(rnd = Math.random) {
@@ -91,7 +91,11 @@ export function step(w, dt) {
   for (const o of w.obs) {
     o.x -= dx;
     if (o.done) continue;
-    const overlap = o.x < bx1 && o.x + o.w > bx0 && o.yb < by1 && o.yb + o.h > by0 + (o.type === 'puddle' ? 0 : 0.5);
+    const xHit = o.x < bx1 && o.x + o.w > bx0;
+    // 벌: 공중 전체를 막음 — 땅에 붙어 달리면 아래로 통과, 조금이라도 떠 있으면(점프 중) 쿵
+    const overlap = o.type === 'bee'
+      ? xHit && w.h > 0
+      : xHit && o.yb < by1 && o.yb + o.h > by0 + (o.type === 'puddle' ? 0 : 0.5);
     if (overlap && w.inv === 0) {
       o.done = true;
       w.hits++; w.combo = 0; w.slow = HIT_SLOW; w.inv = INVULN;

@@ -8,6 +8,7 @@ import { hacho } from './hacho.js';
 import { openModal, toast } from './ui.js';
 import { wear } from './closet.js';
 import { memoryFrame, showMemory } from './album.js';
+import { playEnding } from './ending.js';
 import { pick, shuffle, today } from './util.js';
 
 const PAPERS = Object.values(BOX_GRADES).reduce((a, b) => a + b, 0); // 20
@@ -39,6 +40,15 @@ export function collectedCount() {
 }
 
 export const allCollected = () => collectedCount() === TOTAL_COLLECT;
+
+/** 무지개 쿠지 (무료): 36개를 다 모았을 때 한 번. 무지개 조각 + 왕관 지급. */
+export function claimRainbow() {
+  if (!allCollected() || S.memories.rainbow) return null;
+  S.memories.rainbow = { at: today() };
+  S.items.crown ||= { at: today() };
+  save();
+  return { g: 'R', type: 'rainbow', id: 'rainbow' };
+}
 
 /** 등급에 맞는 보상을 정해서 지급하고 결과를 돌려준다. */
 function award(g) {
@@ -134,17 +144,31 @@ function rainbowHTML() {
 }
 
 function doneHTML() {
+  const done = !!S.memories.rainbow;
   return `
     <h2 class="h2">🎫 하초 쿠지</h2>
-    <div class="card kdone">
-      <div class="ic">🎉</div>
-      <p>1탄·2탄 쿠지를 모두 뽑았어요!</p>
+    <div class="card kdone${done ? ' complete' : ''}">
+      <div class="ic">${done ? '🌈' : '🎉'}</div>
+      <p class="kdone-title">${done ? '완성!' : '1탄·2탄 쿠지를 모두 뽑았어요!'}</p>
+      ${done ? `<p class="kdone-sub">추억조각 ${MEMORIES.length}개와 꾸미기 아이템을 모두 모았어요</p>
+        <div class="btns"><button type="button" class="btn ending-btn" data-act="ending">🌈 엔딩 다시 보기</button></div>` : ''}
     </div>
-    ${rainbowHTML()}`;
+    ${done ? '' : rainbowHTML()}`;
 }
 
 function resultHTML(r) {
   let vis = '', title = '', msg = '', btn = '';
+  if (r.type === 'rainbow') {
+    const m = MEMORY_BY_ID.rainbow;
+    return `
+      <div class="res">
+        <div class="grade gR">무지개</div>
+        ${memoryFrame('rainbow')}
+        <h3 class="m-title">${m.icon} ${m.name} 조각 + 👑 왕관</h3>
+        <p class="m-msg">모든 추억이 모였어요!<br>왕관은 꾸미기에서 써볼 수 있어요</p>
+        <div class="btns"><button type="button" class="btn" data-close>다음 ▶</button></div>
+      </div>`;
+  }
   if (r.type === 'memory') {
     const m = MEMORY_BY_ID[r.id];
     vis = memoryFrame(r.id);
@@ -181,7 +205,21 @@ export function renderKuji(el, ctx) {
 
   const timers = [];
   const onClick = (e) => {
-    if (e.target.closest('[data-act="rainbow"]')) { toast('무지개 쿠지는 10단계에서 만들어요 🌈'); return; }
+    if (e.target.closest('[data-act="ending"]')) { playEnding(ctx); return; }
+    const rb = e.target.closest('[data-act="rainbow"]');
+    if (rb && !busy) {
+      const result = claimRainbow();
+      if (!result) return;
+      busy = true;
+      rb.classList.add('shake');
+      timers.push(setTimeout(() => rb.classList.add('unfold'), 480));
+      timers.push(setTimeout(() => {
+        busy = false;
+        // 결과 모달을 닫으면 엔딩으로
+        openModal({ html: resultHTML(result), dismissible: false, onClose: () => { ctx.rerender(); playEnding(ctx); } });
+      }, 820));
+      return;
+    }
     const paper = e.target.closest('.tk[data-i]');
     if (!paper || busy) return;
     if (S.coins < CONFIG.kujiPrice) {
