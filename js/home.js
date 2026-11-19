@@ -55,7 +55,7 @@ export function renderHome(el, ctx) {
     if (!card) return;
     const id = card.dataset.game;
     if (isPlayable(id)) openGame(id, { onClose: ctx.rerender });
-    else toast('이 게임은 곧 열려요 (8~9단계)');
+    else toast('이 게임은 곧 열려요 (9단계)');
   };
   el.addEventListener('pointerdown', poke);
   el.addEventListener('click', onClick);

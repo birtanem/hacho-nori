@@ -17,6 +17,8 @@ export const STAGE_H = 640;
 const MODULES = {
   tap: () => import('./tap.js'),
   pair: () => import('./pair.js'),
+  mole: () => import('./mole.js'),
+  catch: () => import('./catch.js'),
 };
 export const isPlayable = (id) => !!MODULES[id];
 
@@ -57,8 +59,16 @@ class Session {
     mq.addEventListener?.('change', onMq);
     this.globalOff.push(() => mq.removeEventListener?.('change', onMq));
     const onKey = (e) => this.handleKey(e);
+    const onKeyUp = (e) => { if (this.held) this.held.delete(e.code); };
+    const onBlur = () => { if (this.held) this.held.clear(); };
     window.addEventListener('keydown', onKey);
-    this.globalOff.push(() => window.removeEventListener('keydown', onKey));
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+    this.globalOff.push(() => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+    });
     this.showIntro();
   }
 
@@ -142,6 +152,8 @@ class Session {
     this.timers = [];             // { at, fn, every }
     this.frames = [];             // onFrame 콜백
     this.keys = [];               // { codes, fn }
+    this.watched = new Set();     // 누르고 있는지 확인할 키
+    this.held = new Set();
     this.offs = [];               // 리스너 해제
     this.timerEnd = null;         // 제한시간 끝나는 시계 값
     this.paused = false;
@@ -271,6 +283,7 @@ class Session {
 
   handleKey(e) {
     if (this.state !== 'play' || this.paused) return;
+    if (this.watched.has(e.code)) { e.preventDefault(); this.held.add(e.code); }
     const hit = this.keys.filter((k) => k.codes.includes(e.code));
     if (!hit.length) return;
     e.preventDefault(); // 스크롤 · 포커스된 버튼 누르기 방지
@@ -309,8 +322,13 @@ class Session {
         target.addEventListener(type, wrapped, opts);
         self.offs.push(() => target.removeEventListener(type, wrapped, opts));
       },
-      /** 키 입력 (예: ['Space']) */
+      /** 키 입력 (예: ['Space']) — 꾹 누름 반복은 무시 */
       key(codes, fn) { self.keys.push({ codes, fn }); },
+      /** 누르고 있는 동안 계속 확인할 키 (예: 화살표 이동) */
+      watchKeys(codes) { codes.forEach((c) => self.watched.add(c)); },
+      isDown(code) { return self.held.has(code); },
+      /** 캔버스를 선명하게 그리기 위한 배율 (무대 확대 × 기기 픽셀 비율) */
+      get pixelRatio() { return Math.min(3, Math.max(1, self.scale * (window.devicePixelRatio || 1))); },
       /** 화면 좌표 → 무대 논리 좌표 */
       toLocal(e) {
         const r = self.stageEl.getBoundingClientRect();

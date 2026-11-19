@@ -551,6 +551,32 @@ button.acell:active .frame { transform: translateY(2px); }
 .pcard.ok .face { background: #e6fbe9; border-color: #8ce99a; }
 .pcard.no .face { background: #fff0f0; border-color: #ffa8a8; }
 
+/* 🕳️ 하초 찾기 */
+.mole-grid {
+  position: absolute; left: 20px; right: 20px; top: 50%; transform: translateY(-50%);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.hole {
+  position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 18px;
+  background: radial-gradient(ellipse 44% 15% at 50% 84%, #5a3d28 95%, transparent 100%), #bfe6a8;
+  touch-action: none;
+}
+.pop { position: absolute; left: 8%; width: 84%; bottom: -105%; transition: bottom .12s ease-out; pointer-events: none; }
+.pop svg { display: block; width: 100%; height: auto; }
+.pop .bee { position: relative; aspect-ratio: 240 / 270; }      /* 하초 SVG 칸과 같은 비율 */
+.pop .bee span {                                                 /* 하초 몸통(지름 ≈ 37px)과 비슷한 크기·위치 */
+  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
+  font-size: 38px; line-height: 1;
+}
+.hole.up .pop { bottom: 4%; }
+.hole.hit { animation: holeHit .25s; }
+.hole.ouch { animation: holeOuch .3s; }
+@keyframes holeHit { 50% { background-color: #d8f5c4; } }
+@keyframes holeOuch { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+/* 🍃 잎사귀 받기 */
+.gcv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
 /* ---------- 휴대폰 가로 모드 안내 ---------- */
 .rotate { display: none; }
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 500px) {
