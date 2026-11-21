@@ -1,6 +1,5 @@
-// 👆 탭탭 하초 — 큰 하초(현재 꾸민 모습)를 마구 탭. 첫 탭에 타이머 시작. 코인 = 탭 수 ÷ 4
+// 👆 탭탭 하초 — 큰 하초(꾸미기 없는 기본 모습)를 마구 탭. 첫 탭에 타이머 시작. 코인 = 탭 수 ÷ 4
 import { hacho } from '../hacho.js';
-import { S } from '../state.js';
 
 export default {
   howTo: '하초를 마구마구 눌러요!<br>첫 탭부터 10초 · 4번에 🪙1<br><small>PC: Space 연타도 OK</small>',
@@ -9,7 +8,7 @@ export default {
     api.stage.innerHTML = `
       <div class="tap-wrap">
         <p class="tap-hint">하초를 누르면 시작!</p>
-        <div class="tap-char">${hacho(S.equip)}</div>
+        <div class="tap-char">${hacho()}</div>
       </div>`;
     const ch = api.stage.querySelector('.tap-char');
     const hint = api.stage.querySelector('.tap-hint');
