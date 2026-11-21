@@ -39,7 +39,8 @@ const EYES = `<circle cx="82" cy="112" r="5.5" fill="${EYE}"/><circle cx="118" c
 const MOUTH = `<path d="M88 128 H112 L100 145 Z" fill="#ff6b81" stroke="${EYE}" stroke-width="3" stroke-linejoin="round"/>`;
 
 /* ---------- 배경 ---------- */
-const bgRect = (fill) => `<rect x="-20" y="-20" width="240" height="270" rx="22" fill="${fill}"/>`;
+const BG_BOX = 'x="-20" y="-20" width="240" height="270" rx="22"';
+const bgRect = (fill) => `<rect ${BG_BOX} fill="${fill}"/>`;
 
 const BG = {
   bg_spring: (id) => `
@@ -280,8 +281,8 @@ export function hacho(equip = {}, { bg = true, label = '하초' } = {}) {
     return f ? f(id) : '';
   };
   return `<svg class="char-svg" viewBox="${VB}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}">
-<defs><clipPath id="${id}c"><circle cx="100" cy="120" r="55"/></clipPath></defs>
-${bg ? L('bg') : ''}${bg && equip.bg ? LIMB_HALO : ''}${LIMBS}${HIDES_LEAVES.has(equip.outfit) ? '' : LEAVES}${B('prop')}
+<defs><clipPath id="${id}c"><circle cx="100" cy="120" r="55"/></clipPath><clipPath id="${id}bc"><rect ${BG_BOX}/></clipPath></defs>
+${bg && equip.bg ? `<g clip-path="url(#${id}bc)">${L('bg')}</g>` : ''}${bg && equip.bg ? LIMB_HALO : ''}${LIMBS}${HIDES_LEAVES.has(equip.outfit) ? '' : LEAVES}${B('prop')}
 <circle cx="100" cy="120" r="55" fill="#8fd3ff" stroke="#4a9fd6" stroke-width="3"/>
 ${L('outfit')}${L('prop')}${EYES}${MOUTH}${L('face')}${L('head')}${L('hand')}${L('foot')}</svg>`;
 }
